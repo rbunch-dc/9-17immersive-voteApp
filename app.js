@@ -4,11 +4,23 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+// Get the config file so we have the secret for session
+var config = require('./config/config');
+// Get the express-session module
+var session = require('express-session');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+var sessionOptions = {
+	secret: config.sessionSalt,
+	resave: false,
+	saveUninitialized: true
+}
+
+app.use(session(sessionOptions));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
