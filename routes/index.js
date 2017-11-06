@@ -19,7 +19,9 @@ router.get('/', function(req, res, next) {
 	if(req.session.name != undefined){
 		console.log(`Welcome, ${req.session.name}`);
 	}
-	res.render('index', { title: 'Express' });
+	res.render('index', { 
+		name: req.session.name
+	});
 });
 
 router.get('/register', (req,res,next)=>{
