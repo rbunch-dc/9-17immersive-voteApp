@@ -15,11 +15,10 @@ var users = require('./routes/users');
 var app = express();
 
 var sessionOptions = {
-	secret: config.sessionSalt,
-	resave: false,
-	saveUninitialized: true
+    secret: config.sessionSalt,
+    resave: false,
+    saveUninitialized: true
 }
-
 app.use(session(sessionOptions));
 
 // view engine setup

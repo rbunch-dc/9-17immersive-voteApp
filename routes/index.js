@@ -19,9 +19,36 @@ router.get('/', function(req, res, next) {
 	if(req.session.name != undefined){
 		console.log(`Welcome, ${req.session.name}`);
 	}
-	res.render('index', { 
-		name: req.session.name
+
+	const getBands = new Promise((resolve, reject)=>{
+		// Go get the images...
+		var selectQuery = `SELECT * FROM bands;`;
+		connection.query(selectQuery,(error, results, fields)=>{
+			if(error){
+				reject(error)
+			}else{
+				var rand = Math.floor(Math.random() * results.length);	
+				resolve(results[rand]);
+				// resolve({
+				// 	rand: rand,
+				// 	band: results[rand]
+				// })
+			}
+		});
 	});
+
+	getBands.then(function(bandObj){
+		console.log(bandObj);
+		res.render('index', { 
+			name: req.session.name,
+			band: bandObj
+		});		
+	});
+	getBands.catch((error)=>{
+		res.json(error);
+	})
+
+
 });
 
 router.get('/register', (req,res,next)=>{
