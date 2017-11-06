@@ -12,9 +12,13 @@
     	<h1>Welcome, <%=name%></h1>
     <% } %>
 
-	<h1><%=band.title%></h1>
-	<img src="/images/<%=band.imageUrl%>" />
+	<h1>Rock Or Not</h1>
+	<div class="col-sm-6 col-sm-offset-3 band-image text-center">
+		<h3><%=band.title%></h3>
+		<img src="/images/<%=band.imageUrl%>" />
+		<a href="/vote/up/<%=band.id%>"><button class="btn btn-success">Rocks!</button></a>
+		<a href="/vote/down/<%=band.id%>"><button class="btn btn-danger">Not</button></a>
+	</div>
 
-    <h1>Rock Or Not</h1>
   </body>
 </html>

@@ -16,8 +16,10 @@ connection.connect((error)=>{
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	if(req.session.name != undefined){
-		console.log(`Welcome, ${req.session.name}`);
+	if(req.session.name === undefined){
+		res.redirect('/login?msg=mustlogin');
+		// stop the callback in it's tracks
+		return;
 	}
 
 	const getBands = new Promise((resolve, reject)=>{
@@ -83,6 +85,7 @@ router.post('/registerProcess', (req, res, next)=>{
 	});
 });
 
+// Why does query return error, results and fields
 // somewhere inside of the mysql module...
 // var connection = {};
 // connection.query = function(query,escapedFields,callback){
@@ -119,8 +122,9 @@ router.post('/loginProcess', (req, res, next)=>{
 					var row = results[0];
 					// user in db, password is legit. Log them in.
 					req.session.name = row.name;
-					req.session.id = row.id;
+					req.session.uid = row.id;
 					req.session.email = row.email;
+					console.log(req.session.uid)
 					res.redirect('/');
 				}else{
 					// user in db, but password is bad. Send them back to login
@@ -129,6 +133,21 @@ router.post('/loginProcess', (req, res, next)=>{
 			}
 		}
 	})
+});
+
+router.get('/vote/:direction/:bandId', (req, res)=>{
+	// res.json(req.params);
+	var bandId = req.params.bandId;
+	var direction = req.params.direction;
+	var insertVoteQuery = `INSERT INTO votes (ImageID, voteDirection, userID) VALUES (?,?,?);`;
+	console.log(req.session);
+	connection.query(insertVoteQuery,[bandId, direction,req.session.uid],(error, results)=>{
+		if (error){
+			throw error;
+		}else{
+			res.redirect('/');
+		}
+	});
 });
 
 module.exports = router;
