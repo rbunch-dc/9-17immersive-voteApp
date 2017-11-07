@@ -220,9 +220,9 @@ router.get('/vote/:direction/:bandId', (req, res)=>{
 	// res.json(req.params);
 	var bandId = req.params.bandId;
 	var direction = req.params.direction;
-	var insertVoteQuery = `INSERT INTO votes (ImageID, voteDirection, userID) VALUES (?,?,?);`;
+	var insertVoteQuery = `INSERT INTO votes (ImageID, voteDirection, userID, ip_address) VALUES (?,?,?,?);`;
 	console.log(req.session);
-	connection.query(insertVoteQuery,[bandId, direction,req.session.uid],(error, results)=>{
+	connection.query(insertVoteQuery,[bandId, direction,req.session.uid, req.ip],(error, results)=>{
 		if (error){
 			throw error;
 		}else{
