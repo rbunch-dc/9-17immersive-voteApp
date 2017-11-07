@@ -78,23 +78,34 @@ router.get('/', function(req, res, next) {
 			if(error){
 				reject(error)
 			}else{
-				var rand = Math.floor(Math.random() * results.length);	
-				resolve(results[rand]);
-				// resolve({
-				// 	rand: rand,
-				// 	band: results[rand]
-				// })
+				if(results.length == 0){
+					// user is out of options. Let them know.
+					resolve("done");
+				}else{
+					var rand = Math.floor(Math.random() * results.length);	
+					resolve(results[rand]);
+					// resolve({
+					// 	rand: rand,
+					// 	band: results[rand]
+					// })					
+				}
+
 			}
 		});
 	});
 
 	getBands.then(function(bandObj){
-		console.log(bandObj);
-		res.render('index', { 
-			name: req.session.name,
-			band: bandObj,
-			loggedIn: true
-		});		
+		if(bandObj === "done"){
+			// out of bands.
+			res.redirect('/standings?msg=finished')
+		}else{
+			console.log(bandObj);
+			res.render('index', { 
+				name: req.session.name,
+				band: bandObj,
+				loggedIn: true
+			});
+		}
 	});
 	getBands.catch((error)=>{
 		res.json(error);
@@ -186,6 +197,12 @@ router.post('/loginProcess', (req, res, next)=>{
 	})
 });
 
+router.get('/logout',(req, res)=>{
+	req.session.destroy();
+	res.redirect('/login');
+})
+
+
 router.get('/vote/:direction/:bandId', (req, res)=>{
 	// res.json(req.params);
 	var bandId = req.params.bandId;
@@ -200,5 +217,22 @@ router.get('/vote/:direction/:bandId', (req, res)=>{
 		}
 	});
 });
+
+router.get('/standings',(req, res)=>{
+	const standingsQuery = `
+		SELECT bands.title,bands.imageUrl,votes.imageID, SUM(IF(voteDirection='up',1,0)) as upVotes, SUM(IF(voteDirection='down',1,0)) as downVotes, SUM(IF(voteDirection='up',2,-1)) as total FROM votes
+			INNER JOIN bands on votes.imageID = bands.id
+			GROUP BY imageID;	
+	`
+	connection.query(standingsQuery,(error, results)=>{
+		if(error){
+			throw error;
+		}else{
+			res.render('standings',{
+				standingsResults: results
+			})
+		}
+	})
+})
 
 module.exports = router;
