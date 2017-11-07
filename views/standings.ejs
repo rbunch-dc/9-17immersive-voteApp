@@ -45,14 +45,7 @@
 				</div>
 				<div class="col-sm-6 grid">
 					<% standingsResults.map((band)=>{ %>
-						<% if(band.total > 6){
-							var cls = "top-rated" 
-						 } else if(band.total < 3){
-						 	var cls = "worst-rated" 
-						 } else {
-						 	var cls = "middle"
-						 } %>
-						<div class=" <%=cls%>">
+						<div class=" <%=band.cls%>">
 							<h3><%=band.title%></h3>
 							<div class="col-sm-6">
 								<img src="/images/<%=band.imageUrl%>" />

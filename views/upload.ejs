@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	
+	<% loggedIn = true%>
+	<%include head%>
+
+</head>
+<body>
+
+<%include navbar%>
+
+<form method="post" action="/formSubmit" enctype="multipart/form-data">
+
+	<div class="md-col-4 md-col-offset-2">
+		<input type="text" name="bandName" placeholder="Band Name" />
+		<input type="file" name="imageToUpload" />
+		<input type="submit" class="btn btn-primary" />
+	</div>
+
+</form>
+
+</body>
+</html>
