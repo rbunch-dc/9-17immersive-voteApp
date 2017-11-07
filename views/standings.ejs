@@ -3,10 +3,72 @@
   <head>
 	<title>Rock Or Not</title>
 	<% include head %>
+
+	<style>
+		img{
+			max-width: 100%;
+		}
+	</style>
+
+	<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+
+	<script type="text/javascript">
+		// init Isotope
+		$(document).ready(()=>{
+			var $grid = $('.grid').isotope({
+			  // options
+			});
+			$('#top-rated').click(()=>{
+				$grid.isotope({ filter: '.top-rated' })
+			});
+			$('#worst-rated').click(()=>{
+				$grid.isotope({ filter: '.worst-rated' });
+			})
+			$('#all-bands').click(()=>{
+				$grid.isotope({filter: ''})
+			})
+		});
+	</script>
+
+
 	</head>
 	<body>
 		<% loggedIn = true %>
 		<% include navbar %>
 		<h1>Welcome to the standings page</h1>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-8 col-sm-offset-2 text-center">
+					<button id="all-bands" class="btn btn-default">All Bands</button>
+					<button id="top-rated" class="btn btn-success">Top Rated</button>
+					<button id="worst-rated" class="btn btn-danger">Worst Rated</button>
+				</div>
+				<div class="col-sm-6 grid">
+					<% standingsResults.map((band)=>{ %>
+						<% if(band.total > 6){
+							var cls = "top-rated" 
+						 } else if(band.total < 3){
+						 	var cls = "worst-rated" 
+						 } else {
+						 	var cls = "middle"
+						 } %>
+						<div class=" <%=cls%>">
+							<h3><%=band.title%></h3>
+							<div class="col-sm-6">
+								<img src="/images/<%=band.imageUrl%>" />
+							</div>
+							<div class="col-sm-3">
+								<img src="/images/thumbsUp.png">
+								<%=band.upVotes%>
+							</div>
+							<div class="col-sm-3">
+								<img src="/images/thumbsDown.png">
+								<%=band.downVotes%>
+							</div>							
+						</div>
+					<% }) %>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>

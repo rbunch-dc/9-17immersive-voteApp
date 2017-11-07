@@ -224,13 +224,19 @@ router.get('/standings',(req, res)=>{
 			INNER JOIN bands on votes.imageID = bands.id
 			GROUP BY imageID;	
 	`
+
+	// const giveMeAllTheDataAndIWillFigureItOut = `
+	// 	SELECT * FROM votes
+	// 		INNER JOIN bands on votes.imageID = bands.id
+	// `
+
 	connection.query(standingsQuery,(error, results)=>{
 		if(error){
 			throw error;
 		}else{
 			res.render('standings',{
 				standingsResults: results
-			})
+			});
 		}
 	})
 })
