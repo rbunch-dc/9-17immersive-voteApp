@@ -6,7 +6,15 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-  	<%include navbar%>
+
+    <script type="text/javascript" src="/javascripts/index-script.js"></script>
+    <script type="text/javascript">
+      
+      $(document).ready(()=>{
+        $('.reg-link, .login-link').hide();
+      })
+
+    </script>
 
     <% if(name !== undefined){ %>
     	<h1>Welcome, <%=name%></h1>

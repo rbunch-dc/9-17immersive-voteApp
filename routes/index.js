@@ -14,6 +14,49 @@ connection.connect((error)=>{
 	}
 });
 
+function start(){
+	return new Promise((resolve, reject)=>{
+		resolve([{userID:1}]);
+	});
+}
+
+function queryOne(results){
+	return new Promise((resolve, reject)=>{
+		const selectQuery = `SELECT * FROM users WHERE id = ?`;
+		connection.query(selectQuery,[results[0].userID], (error, results)=>{
+			if(error){
+				reject(error);
+			}else{
+				resolve(results);
+			}		
+		});
+	});
+}
+
+function queryTwo(results){
+	return new Promise((resolve, reject)=>{
+		const selectQuery = `SELECT * FROM votes WHERE userID = ?`;
+		connection.query(selectQuery,[results[0].id],(error,results)=>{
+			if(error){
+				reject(error);
+			}else{
+				resolve(results);
+			}
+		})
+	});
+}
+
+// start()
+// 	.then((q1d)=>queryOne(q1d))
+// 	.then((q2d)=>queryTwo(q2d))
+// 	.then((q3d)=>queryOne(q3d))
+// 	.then((q4d)=>queryTwo(q4d))
+// 	.then((q5d)=>queryOne(q5d))
+// 	.then((q6d)=>queryTwo(q6d))
+// 	.then((q7d)=>console.log(q7d)
+// );
+
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	if(req.session.name === undefined){
@@ -24,8 +67,14 @@ router.get('/', function(req, res, next) {
 
 	const getBands = new Promise((resolve, reject)=>{
 		// Go get the images...
-		var selectQuery = `SELECT * FROM bands;`;
-		connection.query(selectQuery,(error, results, fields)=>{
+		// Select all the images, THIS user has not voted on
+		// var selectQuery = `SELECT * FROM bands;`;
+		var selectSpecificBands = `
+			SELECT * FROM bands WHERE id NOT IN(
+				SELECT imageID FROM votes WHERE userID = ?
+			);
+		`
+		connection.query(selectSpecificBands,[req.session.uid],(error, results, fields)=>{
 			if(error){
 				reject(error)
 			}else{
@@ -43,7 +92,8 @@ router.get('/', function(req, res, next) {
 		console.log(bandObj);
 		res.render('index', { 
 			name: req.session.name,
-			band: bandObj
+			band: bandObj,
+			loggedIn: true
 		});		
 	});
 	getBands.catch((error)=>{
@@ -124,8 +174,9 @@ router.post('/loginProcess', (req, res, next)=>{
 					req.session.name = row.name;
 					req.session.uid = row.id;
 					req.session.email = row.email;
+					req.session.loggedIn = true;
 					console.log(req.session.uid)
-					res.redirect('/');
+					res.redirect('/?msg=loginSucces');
 				}else{
 					// user in db, but password is bad. Send them back to login
 					res.redirect('/login?msg=badPass');
